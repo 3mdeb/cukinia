@@ -24,7 +24,8 @@ GENERIC_FUNCTS='cmd
 		symlink
 		test
 		user
-		group'
+		group
+		file'
 
 # By default log to stdout
 __log_file="/dev/stdout"
@@ -383,6 +384,15 @@ _cukinia_group()
 
 	_cukinia_prepare "Checking group \"$group\""
 	grep -q "^$group:" /etc/group
+}
+
+# _cukinia_file: checks if file $1 exists
+_cukinia_file()
+{
+	local filename="$1"
+
+	_cukinia_prepare "Checking file \"$filename\""
+	test -f $filename
 }
 
 # cukinia_process: checks if process $pname runs
