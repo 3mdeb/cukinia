@@ -25,7 +25,8 @@ GENERIC_FUNCTS='cmd
 		test
 		user
 		group
-		file'
+		file
+		kmod'
 
 # By default log to stdout
 __log_file="/dev/stdout"
@@ -393,6 +394,15 @@ _cukinia_file()
 
 	_cukinia_prepare "Checking file \"$filename\""
 	test -f $filename
+}
+
+# _cukinia_kmod: checks if kernel module $1 is loaded
+_cukinia_kmod()
+{
+	local kmod="$1"
+
+	_cukinia_prepare "Checking kernel module \"$kmod\""
+	lsmod | grep -q "^$kmod"
 }
 
 # cukinia_process: checks if process $pname runs
