@@ -15,6 +15,7 @@ CUKINIA_CONF='/etc/cukinia/cukinia.conf'
 GENERIC_FUNCTS='cmd
 		http_request
 		listen4
+		listen6
 		mount
 		process
 		python_pkg
@@ -514,6 +515,45 @@ _cukinia_listen4()
 	esac
 
 	_cukinia_prepare "Checking $re v4 port \"$port\" is open"
+
+	netstat -$opts | awk '
+		BEGIN {
+		    ret = 1;
+		}
+		$1 ~ /^('$re')$/ && $4 ~ /:'$port'$/ {
+		    ret = 0;
+		}
+		END {
+		    exit ret;
+	    }'
+}
+
+# _cukinia_listen6: check for a locally bound ipv6 port
+# arg1: proto (tcp,udp,any)
+# arg2: local port# (numeric)
+_cukinia_listen6()
+{
+	local proto="$1"
+	local port="$2"
+	local opts="ln"
+	local re
+
+	case "$proto" in
+	tcp)
+		opts="${opts}t"
+		re="tcp6"
+		;;
+	udp)
+		opts="${opts}u"
+		re="udp6"
+		;;
+	any)
+		opts="${opts}tu"
+		re="tcp6|udp6"
+		;;
+	esac
+
+	_cukinia_prepare "Checking $re v6 port \"$port\" is open"
 
 	netstat -$opts | awk '
 		BEGIN {
